@@ -42,7 +42,6 @@ export function ConfidenceBadge({ confidence }: { confidence: Confidence }) {
 export function LeanMeter({ rate, bar, compact = false }: { rate: number; bar: Bar; compact?: boolean }) {
   const max = Math.max(bar.ship * 1.75, rate * 1.15, 0.05);
   const at = (x: number) => `${Math.min(100, Math.max(0, (x / max) * 100))}%`;
-  const clampLabel = (x: number) => `${Math.min(88, Math.max(12, (x / max) * 100))}%`;
   return (
     <div className={compact ? "" : "pt-1"}>
       <div
@@ -65,12 +64,19 @@ export function LeanMeter({ rate, bar, compact = false }: { rate: number; bar: B
         </div>
       </div>
       {!compact && (
-        <div className="relative mt-3 h-5 text-[0.7rem] font-bold">
-          <span className="label-mono absolute -translate-x-1/2 whitespace-nowrap" style={{ left: clampLabel(bar.kill) }}>
-            Kill {pct(bar.kill)}
+        // A legend instead of labels pinned to the ticks: pinned labels collide when the scale stretches.
+        <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5 text-xs font-bold">
+          <span className="inline-flex items-center gap-1.5">
+            <span className="h-3 w-3 rounded-sm border-2 border-ink bg-tomato" aria-hidden="true" />
+            Kill under {pct(bar.kill)}
           </span>
-          <span className="label-mono absolute -translate-x-1/2 whitespace-nowrap" style={{ left: clampLabel(bar.ship) }}>
-            Ship {pct(bar.ship)}
+          <span className="inline-flex items-center gap-1.5">
+            <span className="h-3 w-3 rounded-sm border-2 border-ink bg-sun" aria-hidden="true" />
+            Change in between
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <span className="h-3 w-3 rounded-sm border-2 border-ink bg-lime" aria-hidden="true" />
+            Ship at {pct(bar.ship)}+
           </span>
         </div>
       )}
